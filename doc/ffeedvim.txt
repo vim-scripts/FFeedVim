@@ -1,0 +1,276 @@
+*ffeedvim.txt*  Post to Friendfeed from Vim
+
+		    -------------------------------------
+		    FFeedVim: A Friendfeed client for Vim
+		    -------------------------------------
+
+Author: Po Shan Cheah <morton@mortonfox.com> 
+	http://friendfeed.com/mortonfox
+
+License: The Vim License applies to ffeedvim.vim and ffeedvim.txt (see
+	|copyright|) except use "FFeedVim" instead of "Vim". No warranty,
+	express or implied. Use at your own risk.
+
+
+==============================================================================
+1. Contents					*FFeedVim* *FFeedVim-contents*
+
+	1. Contents...............................: |FFeedVim-contents|
+	2. Introduction...........................: |FFeedVim-intro|
+	3. Installation...........................: |FFeedVim-install|
+	   cURL...................................: |FFeedVim-cURL|
+	   ffeedvim.vim...........................: |FFeedVim-add|
+	   ffeed_login............................: |ffeed_login|
+	   ffeed_proxy............................: |ffeed_proxy|
+	   ffeed_proxy_login......................: |ffeed_proxy_login|
+	3.1. Base64-Encoded Login.................: |FFeedVim-login-base64|
+	     ffeed_login_b64......................: |ffeed_login_b64|
+	     ffeed_proxy_login_b64................: |ffeed_proxy_login_b64|
+	4. FFeedVim Manual........................: |FFeedVim-manual|
+	4.1. Sharing Commands.....................: |FFeedVim-share|
+	     :PostFfeed...........................: |:PostFfeed|
+	     :CPostFfeed..........................: |:CPostFfeed|
+	     <Leader>f............................: |FFeedVim-Leader-f|
+	     :PostImageFfeed......................: |:PostImageFfeed|
+	     :CPostImageFfeed.....................: |:CPostImageFfeed|
+	     <Leader>F............................: |FFeedVim-Leader-S-f|
+	4.2. Links, rooms, and initial comment....: |FFeedVim-links|
+	5. History................................: |FFeedVim-history|
+
+
+==============================================================================
+2. Introduction						*FFeedVim-intro*
+
+FFeedVim is a plugin that allows you to share messages, links, and images on
+Friendfeed, a social network aggregator at http://www.friendfeed.com.
+
+
+==============================================================================
+3. Installation						*FFeedVim-install*
+
+	1. Install cURL.				*FFeedVim-cURL*
+
+	If you don't already have cURL on your system, download it from
+	http://curl.haxx.se/. Make sure that the curl executable is in a
+	directory listed in your PATH environment variable, or the equivalent
+	for your system.
+
+
+	2. ffeedvim.vim					*FFeedVim-add*
+
+	Add ffeedvim.vim to your plugins directory. The location depends on
+	your operating system. See |add-global-plugin| for details.
+
+	If you installed from the Vimball (.vba) file, ffeedvim.vim should
+	already be in its correct place.
+
+
+	3. ffeed_login					*ffeed_login*
+
+	Add the following to your vimrc:
+
+		let ffeed_login = "USER:REMOTEKEY"
+
+	Replace USER with your Friendfeed user name and REMOTEKEY with your
+	Friendfeed remote key. Your remote key is not the same as your
+	password. You can get it by logging into Friendfeed and then visiting
+	http://friendfeed.com/remotekey
+
+	It is possible to avoid having your Friendfeed remote key in plaintext
+	in your vimrc. See |FFeedVim-login-base64| for details.
+
+
+	4. ffeed_proxy					*ffeed_proxy*
+
+	This step is only needed if you access the web through a HTTP proxy.
+	If you use a HTTP proxy, add the following to your vimrc:
+
+		let ffeed_proxy = "proxyserver:proxyport"
+
+	Replace proxyserver with the address of the HTTP proxy and proxyport
+	with the port number of the HTTP proxy.
+
+
+	5. ffeed_proxy_login				*ffeed_proxy_login*
+
+	If the HTTP proxy requires authentication, add the following to your
+	vimrc:
+
+		let ffeed_proxy_login = "proxyuser:proxypassword"
+
+	Where proxyuser is your proxy user and proxypassword is your proxy
+	password.
+
+	It is possible to avoid having your proxy password in plaintext in
+	your vimrc. See |FFeedVim-login-base64| for details.
+
+
+------------------------------------------------------------------------------
+3.1. Base64-Encoded Login				*FFeedVim-login-base64*
+
+	For safety purposes, FFeedVim allows you to specify your Friendfeed
+	login and proxy login information preencoded in base64. This is not
+	truly secure as it is not encryption but it can stop casual onlookers
+	from reading off your password when you edit your vimrc.
+
+						*ffeed_login_b64*
+	To do that, set the following in your vimrc:
+
+		let ffeed_login_b64 = "base64string"
+	
+	Where base64string is your username:remotekey encoded in base64.
+
+						*ffeed_proxy_login_b64*
+	If your HTTP proxy needs authentication, set the following:
+
+		let ffeed_proxy_login_b64 = "base64string"
+
+	Where base64string is your username:password encoded in base64.
+
+
+	An example:
+
+	Let's say Joe User has a Friendfeed login of "joeuser" and a remote
+	key of
+	"something123stuff". His first step is to encode
+	"joeuser:something123stuff" in
+	Base64. He can either use a standalone utility to do that or, in a
+	pinch, he can do the encoding at websites such as the following:
+	http://makcoder.sourceforge.net/demo/base64.php
+	http://www.opinionatedgeek.com/dotnet/tools/Base64Encode/
+
+	The result is: am9ldXNlcjpzb21ldGhpbmcxMjNzdHVmZg==
+
+	Then he adds the following to his vimrc:
+
+		let ffeed_login_b64 = "am9ldXNlcjpzb21ldGhpbmcxMjNzdHVmZg=="
+
+	And his setup is ready.
+
+
+==============================================================================
+4. FFeedVim Manual					*FFeedVim-manual*
+
+------------------------------------------------------------------------------
+4.1. Sharing Commands					*FFeedVim-share*
+
+	These commands share a message, link, or image to your Friendfeed
+	stream.
+
+	:PostFfeed					*:PostFfeed*
+	:PostFfeed {message}
+
+	Share {message} to Friendfeed. If {message} is not supplied on the
+	command line, FFeedVim will prompt you for it.
+
+
+	:CPostFfeed					*:CPostFfeed*
+
+	Share the current line to Friendfeed. 
+	
+	This command also accepts a range, so you can select a range of lines
+	before invoking it or prepend a line range to the command. See
+	|cmdline-ranges| If you give this command a range, it will share all
+	the lines in the range.
+
+
+	<Leader>f					*FFeedVim-Leader-f*
+
+	In visual mode, this mapping shares the highlighted text to
+	Friendfeed. The <Leader> character defaults to \ (backslash) but see
+	|mapleader| for information on customizing that.
+
+
+	:PostImageFfeed					*:PostImageFfeed*
+	:PostImageFfeed {imagefile}
+
+	Share the image file {imagefile} to Friendfeed. If {imagefile} is not
+	supplied on the command line, FFeedVim will prompt you for it.
+
+	In either case, FFeedVim will prompt you for a message to go with the
+	image.
+
+
+	:CPostImageFfeed				*:CPostImageFfeed*
+	:CPostImageFfeed {imagefile}
+
+	Share the image file {imagefile} to Friendfeed. If {imagefile} is not
+	supplied on the command line, FFeedVim will prompt you for it.
+
+	The difference between this command and :PostImageFfeed is this
+	command takes the message text from the current line or line range.
+
+
+	<Leader>F					*FFeedVim-Leader-S-f*
+
+	In visual mode, this mapping (Note: Uppercase F) prompts you for an
+	image file name and shares both the highlighted text and image file to
+	Friendfeed. The <Leader> character defaults to \ (backslash) but see
+	|mapleader| for information on customizing that.
+
+
+------------------------------------------------------------------------------
+4.2. Links, rooms, and initial comment			*FFeedVim-links*
+							*FFeedVim-rooms*
+							*FFeedVim-comment*
+
+	You can augment a message to add links, an initial comment, and a room
+	specifier.
+
+	Here's a plain message:
+
+		Hello, world!
+
+	FFeedVim will share that as a simple message.
+
+
+	Here's a message with a link:
+
+		http://en.wikipedia.org/wiki/Hello_world Hello, world!
+	
+	FFeedVim will share to Friendfeed that as a link to
+	http://en.wikipedia.org/wiki/Hello_world with "Hello, world!" as the
+	link name.
+
+
+	FFeedVim also supports links at the end of a message, so the following
+	message will post the same thing as the previous example:
+
+		Hello, world! http://en.wikipedia.org/wiki/Hello_world
+
+
+	You can also add an initial comment to the message:
+
+		Hello, world! // hello?
+	
+	This will post the message "Hello, world!" with an initial comment of
+	"hello?".
+
+
+	You can post all 3 items together:
+
+		Hello, world! // hello?
+		http://en.wikipedia.org/wiki/Hello_world
+
+	This will post the link with "Hello, world!" as the link name and
+	"hello?" as the initial comment. Note also that the message can be on
+	as many lines as you want. Newline characters within the message are
+	treated as spaces.
+
+
+	And finally, you can specify the room to which the shared item will
+	go. Just add room=NICKNAME to the beginning of the message, where
+	NICKNAME is the room's nickname. Example:
+
+		room=hello Hello, world!
+
+	This will post "Hello, world!" to the hello room.
+
+
+==============================================================================
+5. FFeedVim History					*FFeedVim-history*
+
+	0.1.0 : 2008-05-22 * Initial release.
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:

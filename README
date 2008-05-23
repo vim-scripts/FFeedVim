@@ -1,0 +1,10 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=2247
+
+FFeedVim is a Vim plugin that allows you to post messages, links, and images to Friendfeed. Friendfeed is a social network aggregator at http://friendfeed.com
+
+Since this is an early release of the plugin, it comes with significant limitations: There is no support for viewing Friendfeed timelines yet. There is also no support for liking or commenting on Friendfeed items, although FFeedVim allows you to add an initial comment when posting an item.
+
+After installing FFeedVim, see :help FFeedVim-manual for a list of commands.
+
+I'm on Friendfeed at http://friendfeed.com/mortonfox if anyone wishes to follow my stream.
+
